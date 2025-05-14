@@ -5,7 +5,7 @@ import { pool } from '../../config/db';
 export class PostgresUserRepository implements UserRepository {
 
   async getAll(): Promise<User[]> {
-    /*const client = await pool.connect();
+    const client = await pool.connect();
     try {
       await client.query('BEGIN');
       const res = await client.query<User>('SELECT id, name, email FROM users');
@@ -17,7 +17,6 @@ export class PostgresUserRepository implements UserRepository {
     } finally {
       client.release();
     }
-      */
-    return [{ id: 1, name: 'Pepito', email: 'pepito@gmail.com' }, { id: 2, name: 'Pepito2', email: 'pepito2@gmail.com' }];
+    //return [{ id: 1, name: 'Pepito', email: 'pepito@gmail.com' }, { id: 2, name: 'Pepito2', email: 'pepito2@gmail.com' }];
   }
 }
