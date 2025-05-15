@@ -1,7 +1,7 @@
 import jwt, { SignOptions } from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 import dotenv from 'dotenv';
-import { IAuthService } from '../../application/ports/auth';
+import { IAuthService } from '@application/ports/auth';
 
 dotenv.config();
 

@@ -1,6 +1,6 @@
-import { UserRepository } from '../../../domain/repositories/UserRepository';
-import { User } from '../../../domain/entities/User';
-import { pool } from '../db.config';
+import { UserRepository } from '@domain/repositories/UserRepository';
+import { User } from '@domain/entities/User';
+import { pool } from '@infrastructure/db/db.config';
 
 export class PostgresUserRepository implements UserRepository {
 

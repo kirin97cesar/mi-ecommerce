@@ -1,4 +1,4 @@
-import { Auth } from '../entities/Auth';
+import { Auth } from '@domain/entities/Auth';
 
 export interface AuthRepository {
   save({ username, password, token} : Auth): Promise<boolean>;

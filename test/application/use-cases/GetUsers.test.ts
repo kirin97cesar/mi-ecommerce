@@ -1,6 +1,6 @@
 import { GetUsers } from '../../../src/application/use-cases/GetUsers';
-import { User } from '../../../src/domain/entities/User';
-import { UserRepository } from '../../../src/domain/repositories/UserRepository';
+import { User } from '@domain/entities/User';
+import { UserRepository } from '@domain/repositories/UserRepository';
 
 describe('GetUsers use case', () => {
   it('should return a list of users', async () => {

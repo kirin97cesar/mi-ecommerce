@@ -1,6 +1,6 @@
-import { AuthRepository } from '../../../domain/repositories/AuthRepository';
-import { Auth } from '../../../domain/entities/Auth';
-import { pool } from '../db.config';
+import { AuthRepository } from '@domain/repositories/AuthRepository';
+import { Auth } from '@domain/entities/Auth';
+import { pool } from '@infrastructure/db/db.config';
 
 export class PostgresAuthRepository implements AuthRepository {
   

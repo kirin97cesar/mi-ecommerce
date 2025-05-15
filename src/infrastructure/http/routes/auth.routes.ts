@@ -1,7 +1,7 @@
 import { Router } from 'express';
-import { AuthUseCases } from '../../../application/use-cases/AuthUseCases';
-import { AuthServiceImpl } from '../../auth/authServiceImpl';
-import { PostgresAuthRepository } from '../../../infrastructure/db/repositories/PostgresAuthRepository';
+import { AuthUseCases } from '@application/use-cases/AuthUseCases';
+import { AuthServiceImpl } from '@infrastructure/auth/authServiceImpl';
+import { PostgresAuthRepository } from '@infrastructure/db/repositories/PostgresAuthRepository';
 
 const router = Router();
 
