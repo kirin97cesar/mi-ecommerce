@@ -17,6 +17,5 @@ export class PostgresUserRepository implements UserRepository {
     } finally {
       client.release();
     }
-    //return [{ id: 1, name: 'Pepito', email: 'pepito@gmail.com' }, { id: 2, name: 'Pepito2', email: 'pepito2@gmail.com' }];
   }
 }
