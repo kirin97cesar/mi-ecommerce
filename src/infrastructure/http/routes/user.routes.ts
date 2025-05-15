@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { PostgresUserRepository } from '../../db/PostgresUserRepository';
+import { PostgresUserRepository } from '../../db/repositories/PostgresUserRepository';
 import { GetUsers } from '../../../application/use-cases/GetUsers';
 
 const router = Router();
