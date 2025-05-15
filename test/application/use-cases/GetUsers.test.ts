@@ -1,4 +1,4 @@
-import { GetUsers } from '../../../src/application/use-cases/GetUsers';
+import { GetUsers } from '@application/use-cases/GetUsers';
 import { User } from '@domain/entities/User';
 import { UserRepository } from '@domain/repositories/UserRepository';
 

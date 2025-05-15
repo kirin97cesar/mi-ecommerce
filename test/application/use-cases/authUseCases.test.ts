@@ -1,4 +1,4 @@
-import { AuthUseCases } from '../../../src/application/use-cases/AuthUseCases';
+import { AuthUseCases } from '@application/use-cases/AuthUseCases';
 import { AuthRepository } from '@domain/repositories/AuthRepository';
 import { IAuthService } from '@application/ports/auth'
 
