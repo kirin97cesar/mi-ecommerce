@@ -4,7 +4,6 @@ import { User } from '@domain/entities/User';
 import { UserQuery } from '../queries/UserQuery';
 import { parametersGetAll } from '@domain/dto/parametersGetAll';
 
-
 export class PostgresUserRepository extends PostgresRepository implements UserRepository {
 
   public async getAll({ limite = 10, pagina = 1, filtros }: parametersGetAll): Promise<{
@@ -13,11 +12,14 @@ export class PostgresUserRepository extends PostgresRepository implements UserRe
     paginas: number;
     paginaActual: number;
   }> {
-    pagina = pagina ? pagina :  1;
-    limite = limite ? limite : 10;
+    const parsedPagina = Number(pagina);
+    const parsedLimite = Number(limite);
+
+    const finalPagina = !isNaN(parsedPagina) && parsedPagina > 0 ? parsedPagina : 1;
+    const finalLimite = !isNaN(parsedLimite) && parsedLimite > 0 ? parsedLimite : 10;
 
     const client = await this.getClient();
-    const offset = (pagina - 1) * limite;
+    const offset = (finalPagina - 1) * finalLimite;
 
     try {
       await client.query('BEGIN');
@@ -26,12 +28,12 @@ export class PostgresUserRepository extends PostgresRepository implements UserRe
         this.executeQuery({ sql: UserQuery.COUNT_LIST_USER }),
         this.executeQuery({
           sql: `${UserQuery.LIST_USER} LIMIT $1 OFFSET $2`,
-          params: [limite, offset]
+          params: [finalLimite, offset]
         })
       ]);
 
-      const total = Number(countResult.rows[0]?.total ?? 0);
-      const paginas = Math.ceil(total / limite);
+      const total = Number(countResult?.rows[0]?.total ?? 0);
+      const paginas = Math.ceil(total / finalLimite);
 
       await client.query('COMMIT');
 
@@ -39,7 +41,7 @@ export class PostgresUserRepository extends PostgresRepository implements UserRe
         data: result.rows,
         total,
         paginas,
-        paginaActual: pagina
+        paginaActual: finalPagina
       };
 
     } catch (error) {
