@@ -19,19 +19,46 @@ export class PostgresRepository implements SqlRepository {
     }
   }
 
-  public async executeQuery({ sql, params = [] }: { sql: string; params?: any[] }): Promise<any> {
+  public async executeQuery({
+    sql,
+    params = {},
+  }: {
+    sql: string;
+    params?: Record<string, any>;
+  }): Promise<any> {
     const client = await this.getClient();
 
-    let debugSql = sql;
-    if (params.length > 0) {
-      params.forEach((param, index) => {
-        const safeValue = typeof param === 'string' ? `'${param}'` : param;
-        debugSql = debugSql.replace(new RegExp(`\\$${index + 1}\\b`, 'g'), String(safeValue));
-      });
-    }
+    const values: any[] = [];
+    let index = 1;
+
+    const parsedSql = sql.replace(/:([a-zA-Z_][a-zA-Z0-9_]*)/g, (_, key) => {
+      const value = params[key];
+
+      if (value === undefined) {
+        throw new Error(`Falta el parámetro: ${key}`);
+      }
+
+      if (Array.isArray(value)) {
+        if (value.length === 0) {
+          throw new Error(`El arreglo para el parámetro :${key} no puede estar vacío`);
+        }
+        const placeholders = value.map(() => `$${index++}`);
+        values.push(...value);
+        return placeholders.join(', ');
+      } else {
+        values.push(value);
+        return `$${index++}`;
+      }
+    });
+
+    // Log SQL con parámetros reales
+    const debugSql = parsedSql.replace(/\$(\d+)/g, (_, idx) => {
+      const val = values[Number(idx) - 1];
+      return typeof val === 'string' ? `'${val}'` : String(val);
+    });
 
     console.log('QUERY =>', debugSql);
 
-    return client.query(sql, params);
+    return client.query(parsedSql, values);
   }
 }

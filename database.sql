@@ -32,6 +32,7 @@ CREATE TABLE Usuario (
     nombres VARCHAR(100),
     apellidoPaterno VARCHAR(100),
     apellidoMaterno VARCHAR(100),
+    nombresCompletos VARCHAR(255),
     correo VARCHAR(150) UNIQUE,
     clave VARCHAR(255),
     telefono VARCHAR(20),
@@ -274,6 +275,8 @@ CREATE INDEX idx_tienda_idusuario ON Tienda(idUsuario);
 CREATE INDEX idx_direccion_idusuario ON Direccion(idUsuario);
 
 create index idx_numerodocumento_tipo on usuario(idTipoDocumento, numeroDocumento);
+create index idx_nombresCompletos on usuario(nombresCompletos);
 
 insert into tipodocumento (descripcion) values ('DNI'), ('CE'), ('PASAPORTE');
 insert into TipoUsuario (descripcion,estado) values ('Administrador',true), ('Vendedor',true), ('Cliente',true), ('Invitado',true);
+

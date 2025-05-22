@@ -6,7 +6,7 @@ import { parametersGetAll } from '@domain/dto/parametersGetAll';
 
 export class PostgresUserRepository extends PostgresRepository implements UserRepository {
 
-  public async getAll({ limite = 10, pagina = 1, filtros }: parametersGetAll): Promise<{
+  public async getAll({ limite, pagina = 1, filtros }: parametersGetAll): Promise<{
     data: User[];
     total: number;
     paginas: number;
@@ -24,11 +24,56 @@ export class PostgresUserRepository extends PostgresRepository implements UserRe
     try {
       await client.query('BEGIN');
 
+      const sqlBase = [ UserQuery.LIST_USER ];
+      const sqlBaseCount = [ UserQuery.COUNT_LIST_USER ];
+      const params: any = {};
+
+      if( filtros?.idUsuario ) {
+        sqlBase.push( UserQuery.FIND_USER );
+        sqlBaseCount.push(  UserQuery.FIND_USER );
+        params.idUsuario = filtros?.idUsuario;
+      }
+
+      if( [true,false].includes(filtros?.estado) ) {
+        sqlBase.push( UserQuery.FIND_USER_STATE );
+        sqlBaseCount.push(  UserQuery.FIND_USER_STATE );
+        params.estado = filtros?.estado;
+      }
+
+      if( filtros?.idRol ) {
+        sqlBase.push( UserQuery.FIND_USER_ROL );
+        sqlBaseCount.push(  UserQuery.FIND_USER_ROL );
+        params.idRol = filtros?.idRol;
+      }
+
+      if (filtros?.nombres) {
+        const palabras = filtros.nombres.trim().toLowerCase().split(/\s+/);
+        const condiciones: string[] = [];
+        palabras.forEach((palabra: string, i: number) => {
+          const key = `nombrePalabra${i}`;
+          condiciones.push(`${UserQuery.FIND_USER_NOMBRES} :${key}`);
+          params[key] = `%${palabra}%`;
+        });
+      
+        const sqlBusquedaNombre = `AND (${condiciones.join(' AND ')})`;
+        sqlBase.push(sqlBusquedaNombre);
+        sqlBaseCount.push(sqlBusquedaNombre);
+      }
+
+      if( limite ) {
+        sqlBase.push( UserQuery.LIMIT );
+        params.limit = finalLimite;
+        params.offset = offset;
+      }
+
       const [countResult, result] = await Promise.all([
-        this.executeQuery({ sql: UserQuery.COUNT_LIST_USER }),
+        this.executeQuery({ 
+          sql: sqlBaseCount.join(' '),
+          params
+        }),
         this.executeQuery({
-          sql: `${UserQuery.LIST_USER} LIMIT $1 OFFSET $2`,
-          params: [finalLimite, offset]
+          sql: sqlBase.join(' '),
+          params
         })
       ]);
 
