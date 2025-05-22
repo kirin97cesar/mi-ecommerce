@@ -272,3 +272,8 @@ CREATE TABLE ImagenProducto (
 CREATE INDEX idx_producto_idusuario ON Producto(idUsuario);
 CREATE INDEX idx_tienda_idusuario ON Tienda(idUsuario);
 CREATE INDEX idx_direccion_idusuario ON Direccion(idUsuario);
+
+create index idx_numerodocumento_tipo on usuario(idTipoDocumento, numeroDocumento);
+
+insert into tipodocumento (descripcion) values ('DNI'), ('CE'), ('PASAPORTE');
+insert into TipoUsuario (descripcion,estado) values ('Administrador',true), ('Vendedor',true), ('Cliente',true), ('Invitado',true);

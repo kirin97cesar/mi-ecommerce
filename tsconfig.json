@@ -2,19 +2,18 @@
   "compilerOptions": {
     "target": "ES2020",
     "module": "CommonJS",
-    "rootDir": "src",
+    "rootDir": ".",
     "outDir": "dist",
-    "baseUrl": "src",
+    "baseUrl": ".",
     "paths": {
-      "@domain/*": ["domain/*"],
-      "@infrastructure/*": ["infrastructure/*"],
-      "@application/*": ["application/*"]
+      "@domain/*": ["src/domain/*"],
+      "@infrastructure/*": ["src/infrastructure/*"],
+      "@application/*": ["src/application/*"]
     },
     "esModuleInterop": true,
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "strict": true
   },
-  "include": ["src"],
-  "exclude": ["test"]
+  "include": ["src", "test"]
 }
