@@ -4,11 +4,11 @@ import { GetUsers } from '@application/use-cases/GetUsers';
 
 const router = Router();
 
-router.get('/', async (_req, res) => {
+router.get('/', async (req, res) => {
+  const { limite, pagina, filtros } = req.body;
   const repo = new PostgresUserRepository();
   const useCase = new GetUsers(repo);
-
-  const users = await useCase.getAll();
+  const users = await useCase.getAll({ limite, pagina, filtros });
   res.json(users);
 });
 

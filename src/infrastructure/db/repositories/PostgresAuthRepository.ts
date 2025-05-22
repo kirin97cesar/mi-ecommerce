@@ -1,58 +1,61 @@
 import { AuthRepository } from '@domain/repositories/AuthRepository';
 import { Auth } from '@domain/entities/Auth';
-import { pool } from '@infrastructure/db/db.config';
+import { AuthQuery } from '@infrastructure/db/queries/AuthQuery';
+import { PostgresRepository } from './PostgresRepository';
 
-export class PostgresAuthRepository implements AuthRepository {
-  
+export class PostgresAuthRepository extends PostgresRepository implements AuthRepository {
+
+
   async save({ username, password, token }: Auth): Promise<boolean> {
-    const client = await pool.connect();
+    const client = await this.getClient();
+
     try {
       await client.query('BEGIN');
-      await client.query(
-        `INSERT INTO USUARIOS_TOKEN (correo, clave, token, fechaCreacion) VALUES ($1, $2, $3, NOW())`,
-        [username, password, token]
-      );
+      await this.executeQuery({
+        sql: AuthQuery.INSERT_USER_TOKEN, 
+        params: [username, password, token]
+      });
       await client.query('COMMIT');
       return true;
     } catch (e) {
       await client.query('ROLLBACK');
       throw e;
     } finally {
-      client.release();
+      await this.closeConnection();
     }
   }
 
   async update({ username, token }: Auth): Promise<boolean> {
-    const client = await pool.connect();
+    const client = await this.getClient();
     try {
       await client.query('BEGIN');
-      await client.query(
-        `UPDATE USUARIOS_TOKEN SET token = $1, fechaModificacion = NOW() WHERE correo = $2`,
-        [token, username]
-      );
+      await this.executeQuery({
+        sql: AuthQuery.UPDATE_USER_TOKEN, 
+        params: [token, username]
+      });
       await client.query('COMMIT');
       return true;
     } catch (e) {
       await client.query('ROLLBACK');
       throw e;
     } finally {
-      client.release();
+      await this.closeConnection();
     }
   }
 
   async findByUsername(username: string): Promise<Auth | null> {
-    const client = await pool.connect();
+    const client = await this.getClient();
     try {
-      const res = await client.query(
-        `SELECT correo as username, clave as password, token FROM USUARIOS_TOKEN WHERE correo = $1`,
-        [username]
-      );
+      const res = await this.executeQuery({
+        sql: AuthQuery.FIND_USER, 
+        params: [username]
+      });
       if (res.rowCount === 0) return null;
       return res.rows[0] as Auth;
     } catch (e) {
       throw e;
     } finally {
-      client.release();
+      await this.closeConnection();
     }
   }
 }

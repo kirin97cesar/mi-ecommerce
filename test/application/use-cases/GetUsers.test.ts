@@ -14,7 +14,7 @@ describe('GetUsers use case', () => {
     };
 
     const getUsers = new GetUsers(mockRepo);
-    const result = await getUsers.getAll();
+    const result = await getUsers.getAll({ limite: 10, pagina: 1});
 
     expect(result).toEqual(mockUsers);
     expect(mockRepo.getAll).toHaveBeenCalled();
