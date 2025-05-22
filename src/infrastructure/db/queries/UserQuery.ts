@@ -1,11 +1,12 @@
-const BASE_USER = `FROM usuario u
+const BASE_USER = `
+FROM usuario u
 INNER JOIN TipoUsuario tu
 ON tu.idTipoUsuario = u.idTipoUsuario`;
 
 export const UserQuery = {
     LIST_USER: `
     SELECT u.idusuario, u.nombres, u.apellidopaterno, u.apellidomaterno, tu.descripcion as rol, u.estado
-    ${BASE_USER}
+    ${BASE_USER.trim()}
     WHERE TRUE
     `,
     FIND_USER: `AND u.idUsuario IN (:idUsuario)`,
@@ -14,6 +15,6 @@ export const UserQuery = {
     FIND_USER_NOMBRES: `LOWER(u.nombresCompletos) ILIKE`,
     LIMIT: `LIMIT :limit OFFSET :offset`,
     COUNT_LIST_USER: `
-    SELECT COUNT(1) as total ${BASE_USER}
+    SELECT COUNT(1) as total ${BASE_USER.trim()}
     `
 }
