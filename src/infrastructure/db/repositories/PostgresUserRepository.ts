@@ -2,7 +2,7 @@ import { UserRepository } from '@domain/repositories/UserRepository';
 import { PostgresRepository } from './PostgresRepository';
 import { User } from '@domain/entities/User';
 import { UserQuery } from '../queries/UserQuery';
-import { parametersGetAll } from '@domain/dto/parametersGetAll';
+import { parametersGetAll } from '@domain/dto/parametersGetAllUser';
 
 export class PostgresUserRepository extends PostgresRepository implements UserRepository {
 
@@ -89,6 +89,28 @@ export class PostgresUserRepository extends PostgresRepository implements UserRe
         paginaActual: finalPagina
       };
 
+    } catch (error) {
+      await client.query('ROLLBACK');
+      throw error;
+    } finally {
+      await this.closeConnection();
+    }
+  }
+
+  public async existsUser({ idTipoDocumento, numeroDocumento, idTipoUsuario  }: { idTipoDocumento: number, numeroDocumento: string, idTipoUsuario: number }) : Promise<Boolean> {
+    const client = await this.getClient();  
+    try {
+      await client.query('BEGIN');
+      const existsUserResponse = await this.executeQuery({
+        sql: UserQuery.FIND_USER_DOCUMENT,
+        params: {
+          idTipoDocumento,
+          numeroDocumento,
+          idTipoUsuario
+        }
+      });
+      await client.query('COMMIT');
+      return existsUserResponse?.rows[0]?.exists || false;
     } catch (error) {
       await client.query('ROLLBACK');
       throw error;
